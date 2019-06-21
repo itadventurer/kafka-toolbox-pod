@@ -18,4 +18,13 @@ if [ "x$KAFKA_HEAP_OPTS" = "x" ]; then
     export KAFKA_HEAP_OPTS="-Xmx512M"
 fi
 
+
+# Translate environment variables to parameters
+PARAMS="$@"
+DIR=$( dirname "${BASH_SOURCE[0]}" )
+source "$DIR/utils.sh"
+
+PARAMS=$(add_param_from_env "$KAFKA_BOOTSTRAP_SERVERS" "--bootstrap-server" "$PARAMS")
+PARAMS=$(add_ssl_to_params "$KAFKA_CA_CERT_LOCATION" "$KAFKA_USER_CERT_LOCATION" "$KAFKA_USER_KEY_LOCATION" "--consumer-property" "$PARAMS")
+
 exec $(dirname $0)/kafka-run-class.sh kafka.tools.ConsoleConsumer $PARAMS

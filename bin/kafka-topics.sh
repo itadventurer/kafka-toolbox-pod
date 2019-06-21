@@ -19,4 +19,6 @@ PARAMS="$@"
 DIR=$( dirname "${BASH_SOURCE[0]}" )
 source "$DIR/utils.sh"
 
+PARAMS=$(add_param_from_env "$KAFKA_ZOOKEEPER" "--zookeeper" "$PARAMS")
+
 exec $(dirname $0)/kafka-run-class.sh kafka.admin.TopicCommand $PARAMS
