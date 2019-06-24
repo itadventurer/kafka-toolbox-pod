@@ -1,0 +1,9 @@
+#!/bin/bash
+PARAMS="$@"
+DIR=$( dirname "${BASH_SOURCE[0]}" )
+source "$DIR/utils.sh"
+
+PARAMS=$(add_config_from_env "$KAFKA_BOOTSTRAP_SERVERS" "--producer-props" "bootstrap.servers" "$PARAMS")
+PARAMS=$(add_tls "$PARAMS" "--producer.config")
+
+exec $KAFKA_CLI_DIR/$(basename $0).sh $PARAMS

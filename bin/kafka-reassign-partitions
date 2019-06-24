@@ -1,0 +1,11 @@
+#!/bin/bash
+PARAMS="$@"
+DIR=$( dirname "${BASH_SOURCE[0]}" )
+source "$DIR/utils.sh"
+
+PARAMS=$(add_bootstrap_servers "$PARAMS" "--bootstrap-server")
+PARAMS=$(add_tls "$PARAMS" "--command-config")
+
+PARAMS=$(add_zookeeper "$PARAMS" "--zookeeper")
+
+exec $KAFKA_CLI_DIR/$(basename $0).sh $PARAMS

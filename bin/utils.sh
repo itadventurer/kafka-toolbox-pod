@@ -3,12 +3,8 @@ function add_param_from_env() {
     local ENVVAR="$1"
     local PARAM="$2"
     local PARAMS="$3"
-    if [ -z "$PARAM" ] ; then
-        echo "usage: add_param_from_env [ENVVAR] [PARAM] [PARAMS]"
-        return 1
-    fi
     if [ ! -z "$ENVVAR" ] ; then
-        if [ "$(echo "$PARAMS" | grep -- "$PARAM" || echo "false")" == "false" ] ; then
+        if [ -z "$PARAM" ] || [ "$(echo "$PARAMS" | grep -- "$PARAM" || echo "false")" == "false" ] ; then
             PARAMS="$PARAM $ENVVAR $PARAMS"
         fi
     fi
@@ -58,8 +54,8 @@ function pem_to_keystore() {
     fi
 
     # If a key and a cert is given, create a keystore
-    PEMFILE=$(mktemp)
-    PKCS12FILE=$(mktemp)
+    local PEMFILE=$(mktemp)
+    local PKCS12FILE=$(mktemp)
     cat "$KEY_LOCATION" "$CERT_LOCATION" > $PEMFILE
 
     # Create pkcs12 file
@@ -82,49 +78,63 @@ function pem_to_keystore() {
 }
 
 function rand_str() {
-    LENGTH=$1
+    local LENGTH=$1
     if [ -z "$LENGTH" ] ; then
         LENGTH=10
     fi
     cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w $LENGTH | head -n 1
 }
 
-function add_ssl_to_params() {
-    local CA_CERT_LOCATION="$1"
-    local USER_CERT_LOCATION="$2"
-    local USER_KEY_LOCATION="$3"
-    local CONFIG_ARG="$4"
-    local PARAMS="$5"
+function add_tls() {
+    local PARAMS="$1"
+    local PARAM="$2"
 
-    if [ ! -z "$CA_CERT_LOCATION" ] || [ ! -z "$USER_KEY_LOCATION" ] || [ ! -z "$USER_CERT_LOCATION" ] ; then
-        if [ -z "$CA_CERT_LOCATION" ] ; then
-            echo "Missing \$CA_CERT_LOCATION!"
+    if [ ! -z "$KAFKA_CA_CERT_LOCATION" ] || [ ! -z "$KAFKA_USER_KEY_LOCATION" ] || [ ! -z "$KAFKA_USER_CERT_LOCATION" ] ; then
+        if [ -z "$KAFKA_CA_CERT_LOCATION" ] ; then
+            echo "Missing \$KAFKA_CA_CERT_LOCATION!"
             exit 1
         fi
-        if [ -z "$USER_CERT_LOCATION" ] ; then
-            echo "Missing \$USER_CERT_LOCATION!"
+        if [ -z "$KAFKA_USER_CERT_LOCATION" ] ; then
+            echo "Missing \$KAFKA_USER_CERT_LOCATION!"
             exit 1
         fi
-        if [ -z "$USER_KEY_LOCATION" ] ; then
-            echo "Missing \$USER_KEY_LOCATION!"
+        if [ -z "$KAFKA_USER_KEY_LOCATION" ] ; then
+            echo "Missing \$KAFKA_USER_KEY_LOCATION!"
             exit 1
         fi
-        KEYSTORE_PASSWORD=$(rand_str 20)
-        KEY_ALIAS="mykey"
+        local KEYSTORE_PASSWORD=$(rand_str 20)
+        local KEY_ALIAS="mykey"
+        local CONFIG_FILE=$(mktemp)
 
-        PARAMS=$(add_config_from_env "ssl" "$CONFIG_ARG" "security.protocol" "$PARAMS")
+        echo "security.protocol: ssl" >> $CONFIG_FILE
 
         # Keystore
-        KEYSTORE_LOCATION=/tmp/kafka-keystore-$(rand_str 5).jks
-        pem_to_keystore "$KEYSTORE_LOCATION" "$USER_CERT_LOCATION" "$KEYSTORE_PASSWORD" "$KEY_ALIAS" "$USER_KEY_LOCATION" 2&>1 > /dev/null
-        PARAMS=$(add_config_from_env "$KEYSTORE_LOCATION" "$CONFIG_ARG" "ssl.keystore.location" "$PARAMS")
-        PARAMS=$(add_config_from_env "$KEYSTORE_PASSWORD" "$CONFIG_ARG" "ssl.keystore.password" "$PARAMS")
+        local KEYSTORE_LOCATION=/tmp/kafka-keystore-$(rand_str 5).jks
+        pem_to_keystore "$KEYSTORE_LOCATION" "$KAFKA_USER_CERT_LOCATION" "$KEYSTORE_PASSWORD" "$KEY_ALIAS" "$KAFKA_USER_KEY_LOCATION"
+        echo "ssl.keystore.location: $KEYSTORE_LOCATION" >> $CONFIG_FILE
+        echo "ssl.keystore.password: $KEYSTORE_PASSWORD" >> $CONFIG_FILE
 
         # Truststore
-        TRUSTSTORE_LOCATION=/tmp/kafka-truststore-$(rand_str 5).jks
-        pem_to_truststore "$TRUSTSTORE_LOCATION" "$CA_CERT_LOCATION" "$KEYSTORE_PASSWORD" "$KEY_ALIAS" 2&>1 > /dev/null
-        PARAMS=$(add_config_from_env "$TRUSTSTORE_LOCATION" "$CONFIG_ARG" "ssl.truststore.location" "$PARAMS")
-        PARAMS=$(add_config_from_env "$KEYSTORE_PASSWORD" "$CONFIG_ARG" "ssl.truststore.password" "$PARAMS")
+        local TRUSTSTORE_LOCATION=/tmp/kafka-truststore-$(rand_str 5).jks
+        pem_to_truststore "$TRUSTSTORE_LOCATION" "$KAFKA_CA_CERT_LOCATION" "$KEYSTORE_PASSWORD" "$KEY_ALIAS"
+        echo "ssl.truststore.location: $TRUSTSTORE_LOCATION" >> $CONFIG_FILE
+        echo "ssl.truststore.password: $KEYSTORE_PASSWORD" >> $CONFIG_FILE
+
+        add_param_from_env $CONFIG_FILE "$PARAM" "$PARAMS"
     fi
+    echo "$PARAMS"
+}
+
+function add_zookeeper() {
+    local PARAMS="$1"
+    local PARAM="$2"
+    local PARAMS=$(add_param_from_env "$KAFKA_ZOOKEEPER" "$PARAM" "$PARAMS")
+    echo "$PARAMS"
+}
+
+function add_bootstrap_servers() {
+    local PARAMS="$1"
+    local PARAM="$2"
+    local PARAMS=$(add_param_from_env "$KAFKA_BOOTSTRAP_SERVERS" "$PARAM" "$PARAMS")
     echo "$PARAMS"
 }

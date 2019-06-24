@@ -1,0 +1,10 @@
+#!/bin/bash
+PARAMS="$@"
+DIR=$( dirname "${BASH_SOURCE[0]}" )
+source "$DIR/utils.sh"
+
+if [ ! -z "$ZOOKEEPER_PARAM" ] ; then
+    PARAMS=$(add_zookeeper "$PARAMS" "--zookeeper")
+fi
+
+exec $KAFKA_CLI_DIR/$(basename $0).sh $PARAMS
