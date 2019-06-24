@@ -1,3 +1,1 @@
-#!/bin/bash
-ZOOKEEPER_PARAM="--zookeeper"
-source $(dirname $0)/run_kafka_cli_tool
+run-cli-tool-with-zookeeper

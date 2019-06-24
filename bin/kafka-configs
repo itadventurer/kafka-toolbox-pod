@@ -1,8 +1,1 @@
-#!/bin/bash
-PARAMS="$@"
-DIR=$( dirname "${BASH_SOURCE[0]}" )
-source "$DIR/utils.sh"
-
-PARAMS=$(add_zookeeper "$PARAMS" "--zookeeper")
-
-exec $KAFKA_CLI_DIR/$(basename $0).sh $PARAMS
+run-cli-tool-with-zookeeper
