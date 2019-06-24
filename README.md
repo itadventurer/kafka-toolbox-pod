@@ -145,3 +145,8 @@ Just provide the `KAFKA_ZOOKEEPER` environment variable.
 You need a TLS proxy sidecar that encrypts the Zookeeper traffic. Set
 the `KAFKA_ZOOKEEPER` environment variable to `localhost:2181` (or the
 port your sidecar requires)
+
+## License
+
+This project is licensed under the Apache License Version 2.0 (see
+[LICENSE](./LICENSE)).
