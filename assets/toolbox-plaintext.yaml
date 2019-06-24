@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kafka-toolbox
+spec:
+  containers:
+    - name: kafka-toolbox
+      image: azapps/kafka-toolbox:latest
+      env:
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "{{kafka-url}}"
+        - name: KAFKA_ZOOKEEPER
+          value: "{{zookeeper-url}}"
+      command:
+        - sleep
+        - infinity

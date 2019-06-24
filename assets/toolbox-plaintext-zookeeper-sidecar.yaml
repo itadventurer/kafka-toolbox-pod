@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kafka-toolbox
+spec:
+  containers:
+    - name: kafka-toolbox
+      image: azapps/kafka-toolbox:latest
+      env:
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "{{kafka-url}}"
+        - name: KAFKA_ZOOKEEPER
+          # Do not change! This is the sidecar connection URL
+          value: "localhost:2181"
+      command:
+        - sleep
+        - infinity
+    - name: tls-sidecar
+      image: 'strimzi/entity-operator-stunnel:0.11.3'
+      env:
+        - name: STRIMZI_ZOOKEEPER_CONNECT
+          value: '{{zookeeper-url}}'
+        - name: TLS_SIDECAR_LOG_LEVEL
+          value: notice
+      volumeMounts:
+        - mountPath: "/etc/tls-sidecar/cluster-ca-certs"
+          name: cluster-ca-cert
+        - mountPath: "/etc/tls-sidecar/eo-certs"
+          name: zk-client-cert
+  volumes:
+    - name: cluster-ca-cert
+      secret:
+        secretName: kafka-cluster-ca-cert
+    - name: zk-client-cert
+      secret:
+        secretName: kafka-entity-operator-certs

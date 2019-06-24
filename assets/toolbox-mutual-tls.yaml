@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kafka-toolbox
+spec:
+  containers:
+    - name: kafka-toolbox
+      image: azapps/kafka-toolbox:latest
+      env:
+        - name: KAFKA_USER_KEY_LOCATION
+          value: /var/private/ssl/kafka-client-ca-certs/user.key
+        - name: KAFKA_USER_CERT_LOCATION
+          value: /var/private/ssl/kafka-client-ca-certs/user.crt
+        - name: KAFKA_CA_CERT_LOCATION
+          value: /var/private/ssl/kafka-cluster-ca-certs/ca.crt
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "{{kafka-url}}"
+        - name: KAFKA_ZOOKEEPER
+          value: "{{zookeeper-url}}"
+      volumeMounts:
+      - name: client-ca-certs
+        mountPath: "/var/private/ssl/kafka-client-ca-certs"
+        readOnly: true
+      - name: cluster-ca-cert
+        mountPath: "/var/private/ssl/kafka-cluster-ca-certs"
+        readOnly: true
+      command:
+        - sleep
+        - infinity
+  volumes:
+    - name: cluster-ca-cert
+      secret:
+        secretName: kafka-cluster-ca-cert
+    - name: client-ca-certs
+      secret:
+        secretName: {{kafka-user}}

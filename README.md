@@ -97,7 +97,18 @@ are using Strimzi it is probably called `kafka-cluster-bootstrap`).
 
 #### No authentication, no transport encryption
 
-No additional configuration is required
+No additional configuration is required.
+
+For Kubernetes deployments you can use following templates:
+
+
+* [./assets/toolbox-plaintext.yaml](./assets/toolbox-plaintext.yaml):
+  if connect to zookeeper without transport encryption
+* [./assets/toolbox-plaintext-zookeeper-sidecar.yaml](./assets/toolbox-plaintext-zookeeper-sidecar.yaml):
+  if you use a sidecar to encrypt zookeeper traffic
+
+Do not forget to replace all values in `{{curly-brackets}}` by
+appropriate values!
 
 #### Mutual TLS
 
@@ -106,6 +117,17 @@ You need to provide following environment variables:
 * `KAFKA_USER_KEY_LOCATION`
 * `KAFKA_USER_CERT_LOCATION`
 * `KAFKA_CA_CERT_LOCATION`
+
+For Kubernetes deployments you can use following templates:
+
+
+* [./assets/toolbox-mutual-tls.yaml](./assets/toolbox-mutual-tls.yaml)
+  if connect to zookeeper without transport encryption
+* [./assets/toolbox-mutual-tls-zookeeper-sidecar.yaml](./assets/toolbox-mutual-tls-zookeeper-sidecar.yaml):
+  if you use a sidecar to encrypt zookeeper traffic
+
+Do not forget to replace all values in `{{curly-brackets}}` by
+appropriate values!
 
 #### Other Authentication methods
 
