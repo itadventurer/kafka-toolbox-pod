@@ -4,6 +4,6 @@ DIR=$( dirname "${BASH_SOURCE[0]}" )
 source "$DIR/utils.sh"
 
 PARAMS=$(add_bootstrap_servers "$PARAMS" "--broker-list")
-PARAMS=$(add_tls "$PARAMS" "--config-file")
+PARAMS=$(add_tls "$PARAMS" "--producer.config")
 
 exec $KAFKA_CLI_DIR/$(basename $0).sh $PARAMS

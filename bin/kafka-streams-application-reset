@@ -1,4 +1,4 @@
 #!/bin/bash
 BOOTSTRAP_SERVERS_PARAM="--bootstrap-servers"
-TLS_CONFIG_PARAM="--command-config"
+TLS_CONFIG_PARAM="--config-file"
 source $(dirname $0)/run-kafka-cli-tool.sh

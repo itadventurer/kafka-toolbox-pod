@@ -9,7 +9,7 @@ function test_script {
 
     echo -e -n "\b"
 
-    if [ -z "$(cat /tmp/err)" ]  || [ "$(cat /tmp/err)" != "Processed a total of 2 messages\n" ] ; then
+    if [ -z "$(cat /tmp/err)" ]  || [ "$(cat /tmp/err)" == "Processed a total of 2 messages\n" ] ; then
         echo -e "${bold}${green}✓${normal}"
     else
         echo -e "${bold}${red}✗${normal}"

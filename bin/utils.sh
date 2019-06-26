@@ -120,7 +120,7 @@ function add_tls() {
         echo "ssl.truststore.location: $TRUSTSTORE_LOCATION" >> $CONFIG_FILE
         echo "ssl.truststore.password: $KEYSTORE_PASSWORD" >> $CONFIG_FILE
 
-        add_param_from_env $CONFIG_FILE "$PARAM" "$PARAMS"
+        PARAMS=$(add_param_from_env $CONFIG_FILE "$PARAM" "$PARAMS")
     fi
     echo "$PARAMS"
 }
