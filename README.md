@@ -71,7 +71,7 @@ kafka-broker-api-versions
 kafka-configs --entity-type topics --describe
 kafka-topics --create --topic kafka-toolbox-test --partitions 1 --replication-factor 1
 echo -e "foo\nbar" | kafka-console-producer --topic kafka-toolbox-test
-kafka-console-consumer --topic kafka-toolbox-test --offset 0 --partition 0 --max-messages 2
+kafka-console-consumer --topic kafka-toolbox-test --from-beginning --partition 0 --max-messages 2
 kafka-consumer-groups --list
 kafka-consumer-perf-test --topic kafka-toolbox-test --messages 2
 kafka-delegation-tokens
@@ -82,7 +82,7 @@ kafka-producer-perf-test --topic kafka-toolbox-test --num-records 10 --record-si
 kafka-reassign-partitions
 kafka-streams-application-reset --application-id foo
 kafka-verifiable-producer --topic kafka-toolbox-test --max-messages 10
-kafka-verifiable-consumer --topic kafka-toolbox-test --max-messages 10 --group-id verifiable-consumer
+kafka-verifiable-consumer --topic kafka-toolbox-test --max-messages 10 --group-id verifiable-consumer --group-instance-id foo
 kafka-topics --delete --topic kafka-toolbox-test
 zookeeper-shell
 ```

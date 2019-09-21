@@ -5,7 +5,7 @@ metadata:
 spec:
   containers:
     - name: kafka-toolbox
-      image: azapps/kafka-toolbox:latest
+      image: itadventurer/kafka-toolbox:latest
       env:
         - name: KAFKA_BOOTSTRAP_SERVERS
           value: "{{kafka-url}}"

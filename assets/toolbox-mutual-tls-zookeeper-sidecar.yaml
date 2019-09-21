@@ -5,7 +5,7 @@ metadata:
 spec:
   containers:
     - name: kafka-toolbox
-      image: azapps/kafka-toolbox:latest
+      image: itadventurer/kafka-toolbox:latest
       env:
         - name: KAFKA_USER_KEY_LOCATION
           value: /var/private/ssl/kafka-client-ca-certs/user.key

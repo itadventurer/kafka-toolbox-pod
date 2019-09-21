@@ -1,1 +1,3 @@
-run-cli-tool-with-kafka-bootstrap-server-consumer
+#!/bin/bash
+ZOOKEEPER_PARAM="--zookeeper"
+source $(dirname $0)/run-kafka-cli-tool.sh
