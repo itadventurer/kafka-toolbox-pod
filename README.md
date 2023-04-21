@@ -49,6 +49,20 @@ them explicitly when you log into the container.
 
 ### Run it on Kubernetes
 
+Create single pod - without a deployment:
+```
+$ kubectl run kafka-toolbox --image=itadventurer/kafka-toolbox:latest --env="KAFKA_BOOTSTRAP_SERVERS={{kafka-url}}" --env="KAFKA_ZOOKEEPER={{zookeeper-url}}"
+```
+
+Then:
+```
+$ kubectl exec -it kafka-toolbox -- /bin/bash
+```
+
+**Note:** You can pass additional parameter `--namespace=<your-desired-namespace>` to the above kubectl commands.
+
+Alternatively, you can use the manifest files
+
 1. Download your appropriate yaml file and configure as described below.
 2. `kubectl apply -f my.yaml`
 3. `kubectl run -it kafka-toolbox bash`
@@ -107,8 +121,7 @@ For Kubernetes deployments you can use following templates:
 * [./assets/toolbox-plaintext-zookeeper-sidecar.yaml](./assets/toolbox-plaintext-zookeeper-sidecar.yaml):
   if you use a sidecar to encrypt zookeeper traffic
 
-Do not forget to replace all values in `{{curly-brackets}}` by
-appropriate values!
+Do not forget to replace all values in `{{curly-brackets}}` by appropriate values!
 
 #### Mutual TLS
 

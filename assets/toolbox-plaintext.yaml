@@ -11,6 +11,3 @@ spec:
           value: "{{kafka-url}}"
         - name: KAFKA_ZOOKEEPER
           value: "{{zookeeper-url}}"
-      command:
-        - sleep
-        - infinity
