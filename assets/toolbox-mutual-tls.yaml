@@ -24,9 +24,6 @@ spec:
       - name: cluster-ca-cert
         mountPath: "/var/private/ssl/kafka-cluster-ca-certs"
         readOnly: true
-      command:
-        - sleep
-        - infinity
   volumes:
     - name: cluster-ca-cert
       secret:

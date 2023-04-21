@@ -12,9 +12,6 @@ spec:
         - name: KAFKA_ZOOKEEPER
           # Do not change! This is the sidecar connection URL
           value: "localhost:2181"
-      command:
-        - sleep
-        - infinity
     - name: tls-sidecar
       image: 'strimzi/entity-operator-stunnel:0.11.3'
       env:
